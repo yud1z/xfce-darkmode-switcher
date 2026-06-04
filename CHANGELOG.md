@@ -5,7 +5,6 @@
 ### Added
 
 - qt5ct/qt6ct palette switching for Qt apps.
-- Navicat AppImage wrapper and dark Qt stylesheet documentation.
 
 ## v0.1.0 - 2026-06-04
 
