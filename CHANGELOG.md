@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- qt5ct/qt6ct palette switching for Qt apps.
+- Navicat AppImage wrapper and dark Qt stylesheet documentation.
+
 ## v0.1.0 - 2026-06-04
 
 Initial public release.
@@ -16,4 +23,5 @@ Initial public release.
 - Modern app dark-mode hints through GNOME `gsettings` color-scheme.
 - GTK 3/4 `settings.ini` updates.
 - Automatic `xfsettingsd` startup if missing, so apps like Thunar receive theme changes.
+- qt5ct/qt6ct palette switching for Qt apps.
 - Standalone GTK preview/test target: `make test-ui`.

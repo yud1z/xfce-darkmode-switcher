@@ -180,6 +180,123 @@ ensure_xfsettingsd(void)
 #endif
 }
 
+
+static gchar *
+find_existing_file(const gchar *first, const gchar *second, const gchar *fallback)
+{
+    if (first && g_file_test(first, G_FILE_TEST_EXISTS))
+        return g_strdup(first);
+    if (second && g_file_test(second, G_FILE_TEST_EXISTS))
+        return g_strdup(second);
+    return g_strdup(fallback ? fallback : first);
+}
+
+static void
+set_ini_key_preserve(const gchar *path, const gchar *group, const gchar *key, const gchar *value)
+{
+    gchar *contents = NULL;
+    gsize len = 0;
+    GString *out = g_string_new(NULL);
+    gboolean in_group = FALSE;
+    gboolean saw_group = FALSE;
+    gboolean wrote_key = FALSE;
+    gchar *group_header = g_strdup_printf("[%s]", group);
+    gchar *key_prefix = g_strdup_printf("%s=", key);
+
+    g_file_get_contents(path, &contents, &len, NULL);
+    if (contents && *contents)
+    {
+        gchar **lines = g_strsplit(contents, "\n", -1);
+        for (guint i = 0; lines[i] != NULL; i++)
+        {
+            const gchar *line = lines[i];
+            gboolean is_last_empty = lines[i + 1] == NULL && *line == '\0';
+            if (is_last_empty)
+                break;
+
+            if (line[0] == '[')
+            {
+                if (in_group && !wrote_key)
+                {
+                    g_string_append_printf(out, "%s=%s\n", key, value);
+                    wrote_key = TRUE;
+                }
+                in_group = g_strcmp0(line, group_header) == 0;
+                if (in_group)
+                    saw_group = TRUE;
+                g_string_append_printf(out, "%s\n", line);
+                continue;
+            }
+
+            if (in_group && g_str_has_prefix(line, key_prefix))
+            {
+                g_string_append_printf(out, "%s=%s\n", key, value);
+                wrote_key = TRUE;
+            }
+            else
+            {
+                g_string_append_printf(out, "%s\n", line);
+            }
+        }
+        g_strfreev(lines);
+    }
+
+    if (!saw_group)
+        g_string_append_printf(out, "\n[%s]\n", group);
+    if (!wrote_key)
+        g_string_append_printf(out, "%s=%s\n", key, value);
+
+    gchar *dir = g_path_get_dirname(path);
+    g_mkdir_with_parents(dir, 0700);
+    g_file_set_contents(path, out->str, -1, NULL);
+    g_free(dir);
+    g_free(contents);
+    g_free(group_header);
+    g_free(key_prefix);
+    g_string_free(out, TRUE);
+}
+
+static void
+update_qtct_settings_file(const gchar *tool_name, gboolean dark)
+{
+    gchar *dir = g_build_filename(g_get_user_config_dir(), tool_name, NULL);
+    gchar *path = g_build_filename(dir, dark ? "dummy" : "dummy", NULL);
+    g_free(path);
+    path = g_strdup_printf("%s/%s.conf", dir, tool_name);
+
+    gchar *light_default = g_strdup_printf("/usr/share/%s/colors/airy.conf", tool_name);
+    gchar *light_alt = g_strdup_printf("/usr/share/%s/colors/simple.conf", tool_name);
+    gchar *dark_default = g_strdup_printf("/usr/share/%s/colors/darker.conf", tool_name);
+    gchar *dark_alt = g_strdup_printf("/usr/share/%s/colors/waves.conf", tool_name);
+    gchar *scheme = dark
+        ? find_existing_file(dark_default, dark_alt, dark_default)
+        : find_existing_file(light_default, light_alt, light_default);
+
+    set_ini_key_preserve(path, "Appearance", "color_scheme_path", scheme);
+    set_ini_key_preserve(path, "Appearance", "custom_palette", "false");
+    set_ini_key_preserve(path, "Appearance", "style", "Fusion");
+
+    g_free(scheme);
+    g_free(dark_alt);
+    g_free(dark_default);
+    g_free(light_alt);
+    g_free(light_default);
+    g_free(path);
+    g_free(dir);
+}
+
+static void
+update_qt_settings(gboolean dark)
+{
+    if (g_file_test("/usr/share/qt5ct/colors", G_FILE_TEST_IS_DIR) ||
+        g_file_test(g_build_filename(g_get_user_config_dir(), "qt5ct", NULL), G_FILE_TEST_IS_DIR))
+        update_qtct_settings_file("qt5ct", dark);
+
+    if (g_file_test("/usr/share/qt6ct/colors", G_FILE_TEST_IS_DIR) ||
+        g_file_test(g_build_filename(g_get_user_config_dir(), "qt6ct", NULL), G_FILE_TEST_IS_DIR))
+        update_qtct_settings_file("qt6ct", dark);
+}
+
 static void
 update_gtk_settings_file(const gchar *version, const gchar *theme, gboolean dark)
 {
@@ -508,6 +625,9 @@ darkmode_apply(DarkModePlugin *dm, gboolean dark)
         update_gtk_settings_file("gtk-3.0", theme, dark);
         update_gtk_settings_file("gtk-4.0", theme, dark);
     }
+
+    /* Qt apps on Xfce commonly use qt5ct/qt6ct instead of GTK settings. */
+    update_qt_settings(dark);
 
     dm->dark = dark;
     g_clear_pointer(&dm->last_error, g_free);

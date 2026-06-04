@@ -21,6 +21,7 @@ GSettings-aware apps can follow dark mode.
   - `org.gnome.desktop.interface color-scheme`
   - `org.gnome.desktop.interface gtk-theme`
   - GTK 3/4 `settings.ini`
+  - qt5ct/qt6ct palettes for Qt apps
 
 ## Quick install
 
@@ -72,7 +73,7 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 When switching to light mode, it applies the selected light theme and reverts the color-scheme hint.
 
 For GTK apps such as Thunar, `xfsettingsd` must be running. The plugin starts it automatically if missing.
-Some apps may still need to be restarted before they fully adopt the new mode.
+Qt apps using qt5ct/qt6ct get their palette files updated too. Some apps, especially AppImages such as Navicat, may still need to be restarted before they fully adopt the new mode.
 
 ## Test preview without installing
 
@@ -85,6 +86,8 @@ make test-ui
 ## Troubleshooting
 
 See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+
+For Navicat AppImage, see [docs/NAVICAT.md](docs/NAVICAT.md).
 
 ## Release notes
 
