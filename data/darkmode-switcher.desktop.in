@@ -1,0 +1,10 @@
+[Xfce Panel]
+Type=X-XFCE-PanelPlugin
+Encoding=UTF-8
+Name=Dark Mode Switcher
+Comment=Switch Xfce themes and advertise dark mode to modern apps
+Icon=preferences-desktop-theme
+X-XFCE-Module=darkmode-switcher
+X-XFCE-Module-Path=@PLUGIN_LIBDIR@
+X-XFCE-Internal=FALSE
+X-XFCE-API=2.0

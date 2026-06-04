@@ -1,0 +1,19 @@
+# Build artifacts
+*.o
+*.so
+darkmode-switcher-test
+libdarkmode-switcher.so
+
+# Generated files
+data/darkmode-switcher.desktop
+
+# Local screenshots/test outputs
+screenshot-*.png
+*.log
+
+# Editor/OS
+*~
+.DS_Store
+
+# Local agent/session state
+.omx/
