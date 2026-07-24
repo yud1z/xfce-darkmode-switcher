@@ -17,3 +17,5 @@ screenshot-*.png
 
 # Local agent/session state
 .omx/
+
+.worktrees/
