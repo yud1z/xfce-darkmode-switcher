@@ -2,9 +2,7 @@
 
 ## Unreleased
 
-### Added
-
-- qt5ct/qt6ct palette switching for Qt apps.
+## v0.1.3 - 2026-07-24
 
 ### Documentation
 
