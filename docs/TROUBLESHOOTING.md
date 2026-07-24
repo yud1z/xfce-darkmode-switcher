@@ -2,7 +2,7 @@
 
 ## The item does not appear in “Add New Items”
 
-Install system-wide and restart the panel:
+Install system-wide and restart the panel. On Debian/Ubuntu multiarch systems:
 
 ```sh
 make clean
@@ -11,11 +11,27 @@ sudo make install PREFIX=/usr LIBDIR=/usr/lib/x86_64-linux-gnu
 xfce4-panel -r
 ```
 
-Verify files exist:
+On Alpine Linux or postmarketOS:
+
+```sh
+make clean
+make all PREFIX=/usr LIBDIR=/usr/lib
+sudo make install PREFIX=/usr LIBDIR=/usr/lib
+xfce4-panel -r
+```
+
+Verify files exist on Debian/Ubuntu multiarch systems:
 
 ```sh
 ls /usr/share/xfce4/panel/plugins/darkmode-switcher.desktop
 ls /usr/lib/x86_64-linux-gnu/xfce4/panel/plugins/libdarkmode-switcher.so
+```
+
+Verify files exist on Alpine Linux or postmarketOS:
+
+```sh
+ls /usr/share/xfce4/panel/plugins/darkmode-switcher.desktop
+ls /usr/lib/xfce4/panel/plugins/libdarkmode-switcher.so
 ```
 
 ## Panel changes but Thunar does not

@@ -6,6 +6,10 @@
 
 - qt5ct/qt6ct palette switching for Qt apps.
 
+### Documentation
+
+- Added Alpine Linux/postmarketOS dependency, install, uninstall, and troubleshooting paths.
+
 ## v0.1.0 - 2026-06-04
 
 Initial public release.

@@ -25,18 +25,33 @@ GSettings-aware apps can follow dark mode.
 
 ## Quick install
 
-Install dependencies:
+Install dependencies on Debian/Ubuntu:
 
 ```sh
 sudo apt install build-essential pkg-config libgtk-3-dev xfce4-panel-dev libxfce4panel-2.0-dev xfconf gsettings-desktop-schemas
 ```
 
-Build and install system-wide:
+Install dependencies on Alpine Linux or postmarketOS:
+
+```sh
+sudo apk add build-base pkgconf gtk+3.0-dev xfce4-panel-dev xfconf gsettings-desktop-schemas
+```
+
+Build and install system-wide on Debian/Ubuntu:
 
 ```sh
 make clean
 make all PREFIX=/usr LIBDIR=/usr/lib/x86_64-linux-gnu
 sudo make install PREFIX=/usr LIBDIR=/usr/lib/x86_64-linux-gnu
+xfce4-panel -r
+```
+
+Build and install system-wide on Alpine Linux or postmarketOS:
+
+```sh
+make clean
+make all PREFIX=/usr LIBDIR=/usr/lib
+sudo make install PREFIX=/usr LIBDIR=/usr/lib
 xfce4-panel -r
 ```
 
